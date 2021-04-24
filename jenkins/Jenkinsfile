@@ -11,13 +11,22 @@ pipeline {
                 sh 'mvn -B -DskipTests clean package'
             }
         }
-        stage('Test') {
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
+        stage('Test and Analysis') {
+            parallel {
+                stage('Parallel Stage: Test') {
+                    steps {
+                        sh 'mvn test'
+                    }
+                    post {
+                        always {
+                            junit 'target/surefire-reports/*.xml'
+                        }
+                    }
+                }
+                stage('Parallel Stage: Sonar Analysis') {
+                    steps {
+                        sh 'echo Sonar Analysis'
+                    }
                 }
             }
         }
